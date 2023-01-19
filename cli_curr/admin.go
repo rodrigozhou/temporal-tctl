@@ -447,15 +447,33 @@ func newAdminClusterCommands() []cli.Command {
 				},
 				cli.StringSliceFlag{
 					Name:  FlagNameWithAlias,
-					Usage: "Search attribute name (multiply values are supported)",
+					Usage: "Search attribute name (multiple values are supported)",
 				},
 				cli.StringSliceFlag{
 					Name:  FlagTypeWithAlias,
-					Usage: fmt.Sprintf("Search attribute type: %v (multiply values are supported)", allowedEnumValues(enumspb.IndexedValueType_name)),
+					Usage: fmt.Sprintf("Search attribute type: %v (multiple values are supported)", allowedEnumValues(enumspb.IndexedValueType_name)),
 				},
 			},
 			Action: func(c *cli.Context) {
 				AdminAddSearchAttributes(c)
+			},
+		},
+		{
+			Name:    "alias-search-attributes",
+			Aliases: []string{"alsa"},
+			Usage:   "Create alias for custom search attributes",
+			Flags: []cli.Flag{
+				cli.StringSliceFlag{
+					Name:  FlagNameWithAlias,
+					Usage: "Search attribute name (multiple values are supported)",
+				},
+				cli.StringSliceFlag{
+					Name:  FlagAliasWithAlias,
+					Usage: "Search attribute alias (multiple values are supported)",
+				},
+			},
+			Action: func(c *cli.Context) {
+				AdminAliasSearchAttributes(c)
 			},
 		},
 		{

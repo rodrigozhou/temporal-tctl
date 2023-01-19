@@ -273,7 +273,7 @@ func initializePersistenceFactory(
 	pConfig *config.Persistence,
 	maxQps client.PersistenceMaxQps,
 	clusterName string,
-	metricsHandler metrics.MetricsHandler,
+	metricsHandler metrics.Handler,
 	logger log.Logger,
 ) client.Factory {
 
@@ -330,7 +330,7 @@ func initializeArchivalMetadata(
 func initializeArchivalProvider(
 	serviceConfig *config.Config,
 	clusterMetadata cluster.Metadata,
-	metricsHandler metrics.MetricsHandler,
+	metricsHandler metrics.Handler,
 	logger log.Logger,
 ) provider.ArchiverProvider {
 
@@ -352,7 +352,7 @@ func initializeArchivalProvider(
 	}
 
 	err := archiverProvider.RegisterBootstrapContainer(
-		primitives.FrontendService,
+		string(primitives.FrontendService),
 		historyArchiverBootstrapContainer,
 		visibilityArchiverBootstrapContainer,
 	)
@@ -391,7 +391,7 @@ func initializeDynamicConfig(
 	return dynamicconfig.NewCollection(dynamicConfigClient, logger)
 }
 
-func initializeMetricsHandler(logger log.Logger) metrics.MetricsHandler {
+func initializeMetricsHandler(logger log.Logger) metrics.Handler {
 	return metrics.MetricsHandlerFromConfig(logger, &metrics.Config{})
 }
 

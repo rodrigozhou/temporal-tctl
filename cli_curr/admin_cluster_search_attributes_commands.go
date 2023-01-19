@@ -122,6 +122,43 @@ func AdminAddSearchAttributes(c *cli.Context) {
 	color.HiGreen("Search attributes have been added successfully.")
 }
 
+// AdminAliasSearchAttributes to alias search attributes
+func AdminAliasSearchAttributes(c *cli.Context) {
+	names := getRequiredStringSliceOption(c, FlagName)
+	aliases := getRequiredStringSliceOption(c, FlagAlias)
+
+	if len(names) != len(aliases) {
+		ErrorAndExit("Number of names and aliases options should be the same.", nil)
+	}
+
+	adminClient := cFactory.AdminClient(c)
+	ctx, cancel := newContext(c)
+	defer cancel()
+
+	fieldAliasMap := make(map[string]string, len(names))
+	for i, fieldName := range names {
+		fieldAliasMap[fieldName] = aliases[i]
+	}
+	request := &adminservice.AliasSearchAttributesRequest{
+		FieldAliasMap: fieldAliasMap,
+		IndexName:     c.String(FlagElasticsearchIndex),
+		Namespace:     getRequiredGlobalOption(c, FlagNamespace),
+	}
+
+	// ask user for confirmation
+	promptMsg := fmt.Sprintf(
+		"You are about to alias search attributes %s. Continue? y/N",
+		color.YellowString(strings.TrimLeft(fmt.Sprintf("%v", fieldAliasMap), "map")),
+	)
+	prompt(promptMsg, c.GlobalBool(FlagAutoConfirm))
+
+	_, err := adminClient.AliasSearchAttributes(ctx, request)
+	if err != nil {
+		ErrorAndExit("Unable to alias search attributes.", err)
+	}
+	color.HiGreen("Search attributes have been aliased successfully.")
+}
+
 // AdminRemoveSearchAttributes to add search attributes
 func AdminRemoveSearchAttributes(c *cli.Context) {
 	names := getRequiredStringSliceOption(c, FlagName)
